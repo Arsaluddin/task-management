@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// client/src/App.js
+
+import React, { useState } from 'react';
+import Task from '../components/Task';
+import TaskForm from '../components/TaskForm';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tasks, setTasks] = useState([]);
+
+  const addTask = (newTask) => {
+    setTasks([...tasks, newTask]);
+  };
+
+  // Filter tasks based on their status
+  const todoTasks = tasks.filter((task) => task.status === 'todo');
+  const doingTasks = tasks.filter((task) => task.status === 'doing');
+  const doneTasks = tasks.filter((task) => task.status === 'done');
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container mx-auto mt-8">
+      <TaskForm onAddTask={addTask} />
+      <div className="flex flex-wrap -mx-4">
+        {/* To Do Section */}
+        <div className="w-full md:w-1/3 px-4">
+          <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
+            <h2 className="text-xl font-semibold mb-2">To Do</h2>
+            {/* Task cards in the 'To Do' section */}
+            {todoTasks.map((task, index) => (
+              <Task key={index} task={task} />
+            ))}
+          </div>
+        </div>
+
+        {/* Doing Section */}
+        <div className="w-full md:w-1/3 px-4">
+          <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
+            <h2 className="text-xl font-semibold mb-2">Doing</h2>
+            {/* Task cards in the 'Doing' section */}
+            {doingTasks.map((task, index) => (
+              <Task key={index} task={task} />
+            ))}
+          </div>
+        </div>
+
+        {/* Done Section */}
+        <div className="w-full md:w-1/3 px-4">
+          <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
+            <h2 className="text-xl font-semibold mb-2">Done</h2>
+            {/* Task cards in the 'Done' section */}
+            {doneTasks.map((task, index) => (
+              <Task key={index} task={task} />
+            ))}
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
