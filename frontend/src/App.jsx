@@ -1,8 +1,8 @@
 // client/src/App.js
-
+import 'tailwindcss/tailwind.css';
 import React, { useState } from 'react';
-import Task from '../components/Task';
-import TaskForm from '../components/TaskForm';
+import Task from './components/Task';
+import TaskForm from './components/TaskForm';
 
 function App() {
   const [tasks, setTasks] = useState([]);
