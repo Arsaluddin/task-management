@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import Task from './components/Task';
 import TaskForm from './components/TaskForm';
+import EditTaskModal from './components/EditTaskModel';
+import Modal from 'react-modal';
 
 function App() {
   const [tasks, setTasks] = useState([]);
+  const [editingTask, setEditingTask] = useState(null);
+
 
   const addTask = (newTask) => {
     const newTaskWithId = {
@@ -18,15 +22,30 @@ function App() {
   const doingTasks = tasks.filter((task) => task.status === 'doing');
   const doneTasks = tasks.filter((task) => task.status === 'done');
 
-  // const onDragEnd = (result) => {
-  //   if (!result.destination) return;
+    // Function to handle task deletion
+    const handleDeleteTask = (taskId) => {
+      // Filter out the task with the given taskId
+      const updatedTasks = tasks.filter((task) => task.id !== taskId);
+      setTasks(updatedTasks);
+    };
+  
+    // Function to handle task editing (you can implement this functionality)
+    const handleEditTask = (taskId) => {
+      // Find the task to edit based on the taskId
+      const taskToEdit = tasks.find((task) => task.id === taskId);
+    
+      // Set the editingTask state to the task to be edited
+      setEditingTask(taskToEdit);
+    };
+    
+      // Function to save the edited task
+  const handleSaveEditedTask = (editedTask) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === editedTask.id ? editedTask : task
+    );
+    setTasks(updatedTasks);
+  };
 
-  //   const updatedTasks = [...tasks];
-  //   const [movedTask] = updatedTasks.splice(result.source.index, 1);
-  //   updatedTasks.splice(result.destination.index, 0, movedTask);
-
-  //   setTasks(updatedTasks);
-  // };
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -71,7 +90,11 @@ function App() {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <Task task={task} />
+                          <Task
+                            task={task}
+                            onDeleteTask={handleDeleteTask}
+                            onEditTask={handleEditTask}
+                          />
                         </div>
                       )}
                     </Draggable>
@@ -100,7 +123,11 @@ function App() {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <Task task={task} />
+                          <Task
+                            task={task}
+                            onDeleteTask={handleDeleteTask}
+                            onEditTask={handleEditTask}
+                          />
                         </div>
                       )}
                     </Draggable>
@@ -129,7 +156,11 @@ function App() {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <Task task={task} />
+                          <Task
+                            task={task}
+                            onDeleteTask={handleDeleteTask}
+                            onEditTask={handleEditTask}
+                          />
                         </div>
                       )}
                     </Draggable>
@@ -141,6 +172,19 @@ function App() {
           </Droppable>
         </div>
       </DragDropContext>
+
+      <Modal
+        isOpen={!!editingTask}
+        onRequestClose={() => setEditingTask(null)}
+        ariaHideApp={false}
+      >
+        <EditTaskModal
+          isOpen={!!editingTask}
+          onRequestClose={() => setEditingTask(null)}
+          task={editingTask}
+          onSave={handleSaveEditedTask}
+        />
+      </Modal>
     </div>
   );
 }
