@@ -5,10 +5,16 @@ import TaskForm from './components/TaskForm';
 import EditTaskModal from './components/EditTaskModel';
 import Modal from 'react-modal';
 
+
+
 function App() {
   const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
+  // const [editingTask, setEditingTask] = useState({ title: '', description: '' });
 
+  const openEditModal = (task) => {
+    setEditingTask(task);
+  };
 
   const addTask = (newTask) => {
     const newTaskWithId = {
@@ -179,7 +185,7 @@ function App() {
         ariaHideApp={false}
       >
         <EditTaskModal
-          isOpen={!!editingTask}
+          isOpen={editingTask !== null}
           onRequestClose={() => setEditingTask(null)}
           task={editingTask}
           onSave={handleSaveEditedTask}
