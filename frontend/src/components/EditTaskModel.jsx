@@ -9,7 +9,7 @@ const modalStyles = {
     bottom: 'auto',
     transform: 'translate(-50%, -50%)',
     width: '80%',
-    maxWidth: '400px', // Set a maximum width for larger screens
+    maxWidth: '400px',
     padding: '20px',
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
@@ -18,10 +18,15 @@ const modalStyles = {
 };
 
 const EditTaskModal = ({ isOpen, onRequestClose, task, onSave }) => {
-  const [editedTitle, setEditedTitle] = useState(task.title);
-  const [editedDescription, setEditedDescription] = useState(task.description);
+  const [editedTitle, setEditedTitle] = useState(task ? task.title : ''); // Null check
+  const [editedDescription, setEditedDescription] = useState(task ? task.description : ''); // Null check
 
   const handleSave = () => {
+    if (!task) {
+      // Task is null, handle accordingly
+      return;
+    }
+
     const editedTask = {
       ...task,
       title: editedTitle,
