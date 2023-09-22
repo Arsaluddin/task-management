@@ -1,36 +1,54 @@
-// server/routes/tasks.js
-
 const express = require('express');
 const router = express.Router();
-const Task = require('../models/Task'); // Define your Task model
+const Task = require('../models/Task');
 
-// GET all tasks
-router.get('/', async (req, res) => {
+// Get all tasks
+router.get('/tasks', async (req, res) => {
   try {
     const tasks = await Task.find();
     res.json(tasks);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-// CREATE a task
-router.post('/', async (req, res) => {
-  const task = new Task({
-    title: req.body.title,
-    description: req.body.description,
-    status: req.body.status,
-  });
-
+// Create a new task
+router.post('/tasks', async (req, res) => {
   try {
-    const newTask = await task.save();
-    res.status(201).json(newTask);
+    const newTask = new Task(req.body);
+    const savedTask = await newTask.save();
+    res.json(savedTask);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Other CRUD operations (update and delete) can be similarly defined
+// Update a task
+router.put('/tasks/:taskId', async (req, res) => {
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.taskId,
+      req.body,
+      { new: true }
+    );
+    res.json(updatedTask);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
+// Delete a task
+router.delete('/tasks/:taskId', async (req, res) => {
+  try {
+    await Task.findByIdAndRemove(req.params.taskId);
+    res.json({ message: 'Task deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 module.exports = router;
