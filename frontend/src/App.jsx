@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import Task from './components/Task';
 import TaskForm from './components/TaskForm';
 import EditTaskModal from './components/EditTaskModel';
 import Modal from 'react-modal';
+import axios from 'axios';
 
 
 
@@ -12,18 +13,28 @@ function App() {
   const [editingTask, setEditingTask] = useState(null);
   // const [editingTask, setEditingTask] = useState({ title: '', description: '' });
 
-  const openEditModal = (task) => {
-    setEditingTask(task);
-  };
+  useEffect(async() => {
+     
+   const res = await axios.get('http://localhost:5000/tasks');
+  //  console.log(res.data)
+   setTasks(res.data)
 
-  const addTask = (newTask) => {
+  },[]);
+
+  const addTask = async(newTask) => {
+    
+ 
+     await axios.post('http://localhost:5000/tasks',newTask);
+     const res = await axios.get('http://localhost:5000/tasks');
     const newTaskWithId = {
       ...newTask,
-      id: new Date().getTime().toString(), // Replace with your unique ID generation logic
+       id: res.data[Array.length-1]._id,
+      // id: new Date().getTime().toString(), // Replace with your unique ID generation logic
     };
+     console.log(tasks)
     setTasks([...tasks, newTaskWithId]);
   };
-
+  
   const todoTasks = tasks.filter((task) => task.status === 'todo');
   const doingTasks = tasks.filter((task) => task.status === 'doing');
   const doneTasks = tasks.filter((task) => task.status === 'done');
@@ -57,7 +68,7 @@ function App() {
     if (!result.destination) return;
   
     const updatedTasks = [...tasks];
-    const movedTask = updatedTasks.find((task) => task.id === result.draggableId);
+    const movedTask = updatedTasks.find((task) => task._id === result.draggableId);
   
     // Update the status of the moved task based on the destination droppable
     if (result.destination.droppableId === 'todo') {
@@ -89,7 +100,7 @@ function App() {
                 <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
                   <h2 className="text-xl font-semibold mb-2">To Do</h2>
                   {todoTasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                    <Draggable key={task.id} draggableId={task._id} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
@@ -122,7 +133,7 @@ function App() {
                 <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
                   <h2 className="text-xl font-semibold mb-2">Doing</h2>
                   {doingTasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                    <Draggable key={task.id} draggableId={task._id} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
@@ -155,7 +166,7 @@ function App() {
                 <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
                   <h2 className="text-xl font-semibold mb-2">Done</h2>
                   {doneTasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                    <Draggable key={task.id} draggableId={task._id} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
