@@ -40,25 +40,26 @@ function App() {
   const doneTasks = tasks.filter((task) => task.status === 'done');
 
     // Function to handle task deletion
-    const handleDeleteTask = (taskId) => {
+    const handleDeleteTask = async(taskId) => {
       // Filter out the task with the given taskId
-      const updatedTasks = tasks.filter((task) => task.id !== taskId);
+      const updatedTasks = tasks.filter((task) => task._id !== taskId);
+        await axios.delete(`http://localhost:5000/tasks/${taskId}`);
       setTasks(updatedTasks);
     };
   
     // Function to handle task editing (you can implement this functionality)
     const handleEditTask = (taskId) => {
       // Find the task to edit based on the taskId
-      const taskToEdit = tasks.find((task) => task.id === taskId);
-    
+      const taskToEdit = tasks.find((task) => task._id === taskId);
+      
       // Set the editingTask state to the task to be edited
       setEditingTask(taskToEdit);
     };
     
       // Function to save the edited task
-  const handleSaveEditedTask = (editedTask) => {
-    const updatedTasks = tasks.map((task) =>
-      task.id === editedTask.id ? editedTask : task
+  const handleSaveEditedTask = async(editedTask) => {
+    const updatedTasks = tasks.map(async(task) =>
+      task._id === editedTask._id ? await axios.put(`http://localhost:5000/tasks/${task._id}`,editedTask) : task
     );
     setTasks(updatedTasks);
   };
