@@ -29,8 +29,10 @@ const EditTaskModal = ({ isOpen, onRequestClose, task, onSave }) => {
 
     const editedTask = {
       ...task,
+      
       title: editedTitle,
       description: editedDescription,
+      
     };
 
     onSave(editedTask);

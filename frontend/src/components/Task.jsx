@@ -3,11 +3,11 @@ import React from 'react';
 const Task = ({ task, onDeleteTask, onEditTask  }) => {
 
   const handleDeleteClick = () => {
-    onDeleteTask(task.id);
+    onDeleteTask(task._id);
   };
 
   const handleEditClick = () => {
-    onEditTask(task.id);
+    onEditTask(task._id);
   };
 
   return (
