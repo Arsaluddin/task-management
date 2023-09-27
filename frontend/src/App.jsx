@@ -65,7 +65,7 @@ function App() {
   };
 
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async(result) => {
     if (!result.destination) return;
   
     const updatedTasks = [...tasks];
@@ -82,6 +82,9 @@ function App() {
   
     // Update the tasks array
     setTasks(updatedTasks);
+    await axios.put(`http://localhost:5000/tasks/${movedTask._id}`, {
+    status: movedTask.status,
+  });
   };
   
 
