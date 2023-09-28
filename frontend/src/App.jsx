@@ -15,7 +15,7 @@ function App() {
 
   useEffect(async() => {
      
-   const res = await axios.get('http://localhost:5000/tasks');
+   const res = await axios.get('https://task-management-hhbi.onrender.com/tasks');
   //  console.log(res.data)
    setTasks(res.data)
 
@@ -23,16 +23,21 @@ function App() {
 
   const addTask = async(newTask) => {
     
- 
-     await axios.post('http://localhost:5000/tasks',newTask);
-     const res = await axios.get('http://localhost:5000/tasks');
-    const newTaskWithId = {
-      ...newTask,
-       id: res.data[Array.length-1]._id,
-      // id: new Date().getTime().toString(), // Replace with your unique ID generation logic
-    };
-     console.log(tasks)
-    setTasks([...tasks, newTaskWithId]);
+    try{
+      await axios.post('https://task-management-hhbi.onrender.com/tasks',newTask);
+      const res = await axios.get('https://task-management-hhbi.onrender.com/tasks');
+     const newTaskWithId = {
+       ...newTask,
+        id: res.data[Array.length-1]._id,
+       // id: new Date().getTime().toString(), // Replace with your unique ID generation logic
+     };
+      console.log(tasks)
+     setTasks( [...tasks, newTaskWithId]);
+    }  
+    catch(error){
+       console.log(error)
+    }
+
   };
   
   const todoTasks = tasks.filter((task) => task.status === 'todo');
@@ -43,7 +48,7 @@ function App() {
     const handleDeleteTask = async(taskId) => {
       // Filter out the task with the given taskId
       const updatedTasks = tasks.filter((task) => task._id !== taskId);
-        await axios.delete(`http://localhost:5000/tasks/${taskId}`);
+        await axios.delete(`https://task-management-hhbi.onrender.com/tasks/${taskId}`);
       setTasks(updatedTasks);
     };
   
@@ -58,10 +63,20 @@ function App() {
     
       // Function to save the edited task
   const handleSaveEditedTask = async(editedTask) => {
-    const updatedTasks = tasks.map(async(task) =>
-      task._id === editedTask._id ? await axios.put(`http://localhost:5000/tasks/${task._id}`,editedTask) : task
-    );
-    setTasks(updatedTasks);
+    // const updatedTasks = tasks.map(async(task) =>
+    //   task._id === editedTask._id ? await axios.put(`https://task-management-hhbi.onrender.com/tasks/${task._id}`,editedTask) : task
+    // );
+    // setTasks(updatedTasks);
+    try {
+      // Send the edited task data to the server and wait for a successful response.
+      await axios.put(`https://task-management-hhbi.onrender.com/tasks/${editedTask._id}`, editedTask);
+  
+      // After a successful save, fetch the updated task list.
+      const updatedTaskList = await axios.get('https://task-management-hhbi.onrender.com/tasks');
+      setTasks(updatedTaskList.data);
+    } catch (error) {
+      console.error("Error saving task:", error);
+    }
   };
 
 
@@ -82,7 +97,7 @@ function App() {
   
     // Update the tasks array
     setTasks(updatedTasks);
-    await axios.put(`http://localhost:5000/tasks/${movedTask._id}`, {
+    await axios.put(`https://task-management-hhbi.onrender.com/tasks/${movedTask._id}`, {
     status: movedTask.status,
   });
   };
@@ -104,7 +119,7 @@ function App() {
                 <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
                   <h2 className="text-xl font-semibold mb-2">To Do</h2>
                   {todoTasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task._id} index={index}>
+                    <Draggable key={task._id} draggableId={task._id} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
@@ -137,7 +152,7 @@ function App() {
                 <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
                   <h2 className="text-xl font-semibold mb-2">Doing</h2>
                   {doingTasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task._id} index={index}>
+                    <Draggable key={task._id} draggableId={task._id} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
@@ -170,7 +185,7 @@ function App() {
                 <div className="bg-white rounded-lg p-4 mb-4 shadow-md">
                   <h2 className="text-xl font-semibold mb-2">Done</h2>
                   {doneTasks.map((task, index) => (
-                    <Draggable key={task.id} draggableId={task._id} index={index}>
+                    <Draggable key={task._id} draggableId={task._id} index={index}>
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
