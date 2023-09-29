@@ -13,13 +13,18 @@ function App() {
   const [editingTask, setEditingTask] = useState(null);
   // const [editingTask, setEditingTask] = useState({ title: '', description: '' });
 
-  useEffect(async() => {
-     
-   const res = await axios.get('https://task-management-hhbi.onrender.com/tasks');
-  //  console.log(res.data)
-   setTasks(res.data)
+  const render = async() => {
+    const res = await axios.get('https://task-management-hhbi.onrender.com/tasks');
+    //  console.log(res.data)
+     setTasks(res.data)
+  }
 
-  },[]);
+  useEffect(() => {
+     
+ 
+   render();
+
+  },[tasks]);
 
   const addTask = async(newTask) => {
     
